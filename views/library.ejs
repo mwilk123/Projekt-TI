@@ -1,0 +1,44 @@
+<%- include('partials/header.ejs', {
+  title: 'TI - Biblioteka plików',
+  styles: ['/public/css/basic.min.css', '/public/css/dropzone.min.css']
+}) %>
+
+<h1 class="title is-1">Biblioteka plików</h1>
+
+<form id="file-upload-dropzone" action="/upload" method="post" class="dropzone">
+  <div class="fallback">
+    <input name="file" type="file" multiple />
+  </div>
+</form>
+
+<div>
+  <% files.forEach(function (file) { %>
+  <div class="card library-image">
+    <div class="card-image" style="background-image: url(/images/<%=file.filename%>)">
+    </div>
+    <div class="card-content">
+      <div class="truncate"><%=file.originalName%></div>
+      <% if (file.groups.length) { %>
+        <div>
+          <b>Grupy: </b>
+          <% file.groups.forEach(function (group) { %>
+             <span class="tag"><%= group%></span>
+          <% }); %>
+        </div>
+      <% } %>
+      <% if (file.clients.length) { %>
+        <div>
+          <b>Klienci: </b>
+          <% file.clients.forEach(function (client) { %>
+             <span class="tag"><%= client%></span>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  <% }) %>
+</div>
+
+<%- include('partials/footer', {
+  scripts: ['/public/js/lib/dropzone.min.js', '/public/js/library.js']
+}) %>

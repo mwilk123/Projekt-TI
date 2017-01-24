@@ -1,0 +1,89 @@
+
+.root-wrapper {
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.menu {
+  width: 200px;
+  display: inline-block
+  /*float: left;*/
+}
+
+.content-wrapper {
+  width: 80%;
+  flex-grow: 100;
+  display: inline-block;
+  /*float: left;*/
+}
+
+.current-images img {
+  max-height: 150px;
+}
+
+#file-upload-dropzone {
+  border: 1px dashed #9e9e9e;
+  border-radius: 15px;
+}
+
+.card.library-image {
+  display: inline-block;
+  width: 256px;
+  margin: 20px 20px 0 0;
+  vertical-align: top;
+}
+
+.library-image .card-image {
+  width: 256px;
+  height: 256px;
+  background-size: auto 256px;
+  background-position: center;
+}
+
+.card.library-image .truncate {
+  width: 216px;
+}
+
+.card.attach-image {
+  display: inline-block;
+  width: 128px;
+  margin: 20px 20px 0 0;
+}
+
+.attach-image .card-image {
+  width: 128px;
+  height: 128px;
+  background-size: auto 128px;
+  background-position: center;
+}
+
+.card.attach-image .truncate {
+  width: 88px;
+}
+
+.truncate {
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-content > div:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.small-image {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  background-size: auto 64px;
+  background-position: center;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+}
+
+.box .label {
+  margin: 10px 0;
+}

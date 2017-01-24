@@ -1,0 +1,11 @@
+    <div class="content-wrapper">
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="/public/js/lib/jquery.js" defer></script>
+  <% scripts.forEach(function (script) { %>
+      <script type="text/javascript" src="<%= script %>" defer></script>
+  <% }); %>
+</body>
+</html>
+

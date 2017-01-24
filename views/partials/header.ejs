@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Michał Wilkowski">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/css/bulma.css" media="screen">
+    <% Array.isArray(styles) && styles.forEach(function (style) { %>
+      <link rel="stylesheet" href="<%=style%>">
+    <% }); %>
+    <link rel="stylesheet" href="/public/css/common.css" media="screen">
+
+</head>
+<body>
+  <div class="root-wrapper">
+    <% include menu.ejs %>
+    <div class="content-wrapper">

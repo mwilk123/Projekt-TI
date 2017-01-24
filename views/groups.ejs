@@ -1,0 +1,54 @@
+<%- include('partials/header.ejs', {
+  title: 'TI - Grupy',
+  styles: []
+}) %>
+
+<h1 class="title is-1">Grupy</h1>
+
+<nav class="level">
+  <!-- Left side -->
+  <div class="level-left">
+    
+  </div>
+  <!-- Right side -->
+  <div class="level-right">
+    <div class="level-item">
+      <button class="func-add-group button is-primary">Dodaj nową grupę</button>
+    </div>
+  </div>
+</nav>
+
+<% groups.forEach(function (group) { %>
+<div class="box">
+  <div class="level" data-group-name="<%= group.name %>">
+    <!-- Left side -->
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title"><%= group.name %></h1>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <a class="button" href="/attach-files/groups/<%= group.name %>">Przypisz pliki</a>
+      </div>
+    </div>
+  </div>
+  <% if (group.clients.length) { %>
+    <label class="label is-6"><b>Klienci:</b></label>
+    <% group.clients.forEach(function (client) { %>
+      <span class="tag"><%= client %></span>
+    <% }) %>
+  <% } %>
+  <% if (group.filenames.length) { %>
+    <label class="label is-6"><b>Pliki:</b></label>
+    <% group.filenames.forEach(function (filename) { %>
+      <div class="small-image" style="background-image: url(/images/<%=filename%>)"></div>
+    <% }) %>
+  <% } %>
+</div>
+
+<% }) %>
+
+<%- include('partials/footer', {
+  scripts: ['/public/js/groups.js']
+}) %>

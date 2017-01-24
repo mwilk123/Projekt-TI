@@ -1,0 +1,70 @@
+<%- include('partials/header.ejs', {
+  title: 'TI - Klienci',
+  styles: []
+}) %>
+
+<h1 class="title is-1">Klienci</h1>
+
+<nav class="level">
+  <div class="level-left"></div>
+  <div class="level-right">
+    <div class="level-item">
+      <button class="func-sync-clients button is-primary">Synchronizuj</button>
+    </div>
+  </div>
+</nav>
+
+<% clients.forEach(function (client) { %>
+<div class="box client"  data-name="<%= client.name %>">
+  <div class="level">
+    <!-- Left side -->
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title"><%= client.name %></h1>
+      </div>
+      <div class="level-item">
+        <% if (client.connected) {%>
+          <span class="client-state tag is-success is-medium">Połączony</span>
+        <% } else { %>
+          <span class="client-state tag is-danger is-medium">Rozłączony</span>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Right side -->
+    <div class="level-right">
+      <div class="level-item">
+        <a class="button" href="/attach-files/clients/<%= client.name %>">Przypisz pliki</a>
+      </div>
+    </div>
+  </div>
+  <div>
+    <label class="label">Grupa:</label>
+    <p class="control">
+      <span class="select">
+        <select class="func-group-selection">
+          <option value="">brak grupy</option>
+          <% groups.forEach(function (group) { %>
+            <% if (client.group === group.name) { %>
+              <option value="<%= group.name%>" selected><%= group.name%></option>
+            <% } else { %>
+               <option value="<%= group.name%>"><%= group.name%></option>
+            <% } %>
+          <% }) %>
+        </select>
+      </span>
+    </p>
+    <% if (client.filenames.length) { %>
+      <label class="label is-6"><b>Pliki:</b></label>
+      <% client.filenames.forEach(function (filename) { %>
+        <div class="small-image" style="background-image: url(/images/<%=filename%>)"></div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<% }) %>
+
+<%- include('partials/footer', {
+  scripts: ['/public/js/clients.js']
+}) %>
