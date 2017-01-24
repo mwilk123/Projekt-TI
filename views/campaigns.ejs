@@ -1,0 +1,93 @@
+<%- include('partials/header.ejs', {
+  title: 'TI - Kampanie',
+  styles: ['/public/css/fullcalendar.min.css']
+}) %>
+
+<div class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <form action="">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Dodawanie kampanii</p>
+        <button class="delete cancel" type="button"></button>
+      </header>
+      <section class="modal-card-body">
+        <input type="hidden" name="start">
+        <input type="hidden" name="end">
+        <label class="label">Nazwa kampanii</label>
+        <p class="control">
+          <input class="input" type="text" name="name" placeholder="Nazwa kampanii">
+        </p>
+        <p class="control">
+          <label class="radio">
+            <input type="radio" name="type" value="client" checked>
+            Klient
+          </label>
+          <label class="radio">
+            <input type="radio" name="type" value="group">
+            Grupa
+          </label>
+        </p>
+        <div class="control client-select">
+          <label class="label">Klient</label>
+          <span class="select">
+            <select name="client">
+              <% clients.forEach(function (client, index) { %>
+                <% if (!index) { %>
+                  <option value="<%= client.name%>" selected><%= client.name%></option>
+                <% } else { %>
+                  <option value="<%= client.name%>"><%= client.name%></option>
+                <% } %>
+              <% }) %>
+            </select>
+          </span>
+        </div>
+        <div class="control group-select" style="display: none">
+          <label class="label">Grupa</label>
+          <span class="select">
+            <select name="group">
+              <% groups.forEach(function (group, index) { %>
+                <% if (!index) { %>
+                  <option value="<%= group.name%>" selected><%= group.name%></option>
+                <% } else { %>
+                  <option value="<%= group.name%>"><%= group.name%></option>
+                <% } %>
+              <% }) %>
+            </select>
+          </span>
+        </div>
+        <label class="label">Playlista</label>
+        <p class="control playlist-select">
+          <span class="select">
+            <select name="playlist">
+              <% playlists.forEach(function (playlist, index) { %>
+                <% if (!index) { %>
+                  <option value="<%= playlist.name%>" selected><%= playlist.name%></option>
+                <% } else { %>
+                  <option value="<%= playlist.name%>"><%= playlist.name%></option>
+                <% } %>
+              <% }) %>
+            </select>
+          </span>
+        </p>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-primary" type="submit">Zapisz</button>
+        <button class="button cancel" type="button">Anuluj</button>
+      </footer>
+    </form>
+  </div>
+</div>
+
+<h1 class="title is-1">Kampanie</h1>
+
+<div class="campaigns-view"></div>
+
+<%- include('partials/footer', {
+  scripts: [
+    '/public/js/lib/moment.min.js',
+    '/public/js/lib/fullcalendar.min.js',
+    '/public/js/lib/fullcalendar-locale-pl.js',
+    '/public/js/lib/jquery.serializeObject.js',
+    '/public/js/campaigns.js']
+}) %>

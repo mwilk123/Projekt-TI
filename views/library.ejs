@@ -1,6 +1,6 @@
 <%- include('partials/header.ejs', {
   title: 'TI - Biblioteka plików',
-  styles: ['/public/css/basic.min.css', '/public/css/dropzone.min.css']
+  styles: ['/public/css/basic.min.css', '/public/css/dropzone.min.css', '//vjs.zencdn.net/5.4.6/video-js.min.css']
 }) %>
 
 <h1 class="title is-1">Biblioteka plików</h1>
@@ -14,8 +14,14 @@
 <div>
   <% files.forEach(function (file) { %>
   <div class="card library-image">
-    <div class="card-image" style="background-image: url(/images/<%=file.filename%>)">
-    </div>
+    <% if (file.type === 'video') { %>
+      <video id="video_<%=file.id%>" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="256" height="256" data-setup='{"example_option":true}'>
+        <source src="/images/<%=file.filename%>" type="<%=file.mime%>" />
+        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+      </video>
+    <% } else { %>
+      <div class="card-image" style="background-image: url(/images/<%=file.filename%>)"></div>
+    <% } %>
     <div class="card-content">
       <div class="truncate"><%=file.originalName%></div>
       <% if (file.groups.length) { %>
@@ -40,5 +46,5 @@
 </div>
 
 <%- include('partials/footer', {
-  scripts: ['/public/js/lib/dropzone.min.js', '/public/js/library.js']
+  scripts: ['/public/js/lib/dropzone.min.js', '//vjs.zencdn.net/5.4.6/video.min.js', '/public/js/library.js']
 }) %>

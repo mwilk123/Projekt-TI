@@ -6,7 +6,7 @@ Dropzone.options.fileUploadDropzone = {
     })
   },
   paramName: 'file', // nazwa pola plikowego
-  acceptedFiles: 'image/*', // akceptujemy tylko obrazki
+  acceptedFiles: 'image/*,video/*', // akceptujemy tylko obrazki
   uploadMultiple: true, // możliwość załadowania wielu plików jednocześnie
   dictDefaultMessage: 'Przeciągnij i upuść pliki w tej strefie, aby załadować je na serwer.'
 };

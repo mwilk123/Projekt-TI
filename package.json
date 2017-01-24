@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start:dev": "nodemon -e js index.js",
     "start": "forever index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,9 +16,15 @@
     "body-parser": "^1.15.2",
     "ejs": "^2.5.3",
     "express": "^4.14.0",
+    "get-video-duration": "^0.1.0",
     "lowdb": "^0.14.0",
+    "moment": "^2.17.1",
     "multer": "^1.2.0",
     "socket.io": "^1.7.1",
-    "socket.io-client": "^1.7.1"
+    "socket.io-client": "^1.7.1",
+    "ws": "^1.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }

@@ -1,22 +1,38 @@
 <%- include('partials/header.ejs', {
   title: 'TI - Przypisz pliki',
-  styles: []
+  styles: ['//vjs.zencdn.net/5.4.6/video-js.min.css']
 }) %>
 
 <h1 class="title is-1">Przypisywanie plików (<%= typeName%>) - <%=name%></h1>    
 <div class="images" data-type="<%=type%>" data-name="<%=name%>">
   <% files.forEach(function (file) { %>
   <div class="card attach-image">
-    <div class="card-image" style="background-image: url(/images/<%=file.filename%>)">
-    </div>
+    <% if (file.type === 'video') { %>
+      <video id="video_<%=file.id%>" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="128" height="128" data-setup='
+        {
+          "controlBar": {
+            "volumeMenuButton": {
+              "inline": false,
+              "vertical": true
+            },
+            "remainingTimeDisplay": false,
+            "volume": false
+          }
+        }'>
+        <source src="/images/<%=file.filename%>" type="<%=file.mime%>" />
+        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+      </video>
+    <% } else { %>
+      <div class="card-image" style="background-image: url(/images/<%=file.filename%>)"></div>
+    <% } %>
     <div class="card-content">
       <div class="truncate">
       <p class="control">
-        <label class="checkbox truncate">
+        <label class="<%=inputType%> truncate">
           <% if (file.attached) {%>
-            <input type="checkbox" data-id="<%=file.id %>" checked>
+            <input type="<%=inputType%>" data-id="<%=file.id %>" name="attached" checked>
           <% } else { %>
-            <input type="checkbox" data-id="<%=file.id %>">
+            <input type="<%=inputType%>" data-id="<%=file.id %>" name="attached">
           <% }%>
           <%=file.originalName%>
         </label>
@@ -26,9 +42,9 @@
   <% }) %>
 </div>
 <div class="has-text-centered" style="margin-top: 30px;">
-    <button class="button is-success is-large func-attach-images">Aktualizuj</button>
+    <button class="button is-success is-large func-attach-files">Aktualizuj</button>
 </div>
 
 <%- include('partials/footer', {
-  scripts: ['/public/js/attach-files.js']
+  scripts: ['//vjs.zencdn.net/5.4.6/video.min.js', '/public/js/attach-files.js']
 }) %>

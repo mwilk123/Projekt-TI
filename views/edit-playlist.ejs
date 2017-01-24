@@ -1,0 +1,90 @@
+<%- include('partials/header.ejs', {
+  title: 'TI - Edycja playlisty',
+  styles: ['//vjs.zencdn.net/5.4.6/video-js.min.css']
+}) %>
+
+<h1 class="title is-1">Edycja playlisty - <%=playlist.name%></h1>
+
+<nav class="level">
+  <!-- Left side -->
+  <div class="level-left">
+    
+  </div>
+  <!-- Right side -->
+  <div class="level-right">
+    <div class="level-item">
+       <a class="button is-primary" href="/attach-files/playlists/<%= playlist.name %>">Dodaj element</a>
+    </div>
+  </div>
+</nav>
+
+<div class="items-container" data-playlist-name="<%=playlist.name%>">
+  <% if (playlist.items.length) { %>
+    <% playlist.items.forEach(function (item) { %>
+      <div class="box playlist-item" data-id="<%=item.id%>">
+        <nav class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <span class="icon reorder-handle">
+                <i class="fa fa-arrows"></i>
+              </span>
+            </div>
+            <div class="level-item">
+              <% if (item.file.type === 'video') { %>
+                <video id="video_<%=item.file.id%>" class="video-js vjs-default-skin vjs-big-play-centered playlist-video" controls preload="auto" width="128" height="128" data-setup='
+                  {
+                    "controlBar": {
+                      "volumeMenuButton": {
+                        "inline": false,
+                        "vertical": true
+                      },
+                      "remainingTimeDisplay": false,
+                      "volume": false
+                    }
+                  }'>
+                  <source src="/images/<%=item.file.filename%>" type="<%=item.file.mime%>" />
+                  <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                </video>
+              <% } else { %>
+                <div class="playlist-image" style="background-image: url(/images/<%=item.file.filename%>)"></div>
+              <% } %>
+            </div>
+            <div class="level-item">
+              <div>
+                <b class="title is-4"><%= item.file.originalName %> (<%=(item.file.type === 'video') ? 'film' : 'zdjęcie' %>)</b>
+              </div>
+              <div>
+                <b class="subtitle">Czas trwania: <span class="duration-display"><%=item.displayDuration%></span></b>
+              </div>
+              <% if (item.file.type !== 'video') { %>
+                <div>
+                  <input type="range" min="1" max="1800" value="<%=item.duration%>">
+                </div>
+              <% } %>
+            </div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <span class="icon remove-item">
+                <i class="fa fa-trash"></i>
+              </span>
+            </div>
+          </div>
+        </nav>
+      </div>
+      
+    <% }) %>
+  <% } else { %>
+    <div class="box">
+      <b>Brak elementów.</b>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer', {
+  scripts: [
+    '//vjs.zencdn.net/5.4.6/video.min.js',
+    '/public/js/lib/jquery-sortable.min.js',
+    '/public/js/edit-playlist.js'
+  ]
+}) %>

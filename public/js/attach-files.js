@@ -1,6 +1,6 @@
 // czekamy na załodowanie się całego drzewa DOM
 $(document).ready(function () {
-  $('.func-attach-images').on('click', function () {
+  $('.func-attach-files').on('click', function () {
     $(this).addClass('is-loading');
 
     var container = $('.images');
@@ -10,7 +10,7 @@ $(document).ready(function () {
     var ids = [];
 
     // wybieramy wszystkie zaznaczone pliki o odczytujemy ich id
-    container.find('input:checkbox:checked').each(function () {
+    container.find('input:checked').each(function () {
       ids.push($(this).data('id'));
     });
 
@@ -19,7 +19,11 @@ $(document).ready(function () {
       name: name,
       ids: ids,
     }).then(function () {
-      location.href = '/' + type;
+      if (type === 'playlists') {
+        location.href = '/edit-playlist/' + name
+      } else {
+        location.href = '/' + type;
+      }
     });
   })
 });

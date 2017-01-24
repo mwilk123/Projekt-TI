@@ -3,14 +3,6 @@ process.chdir(__dirname);
 // biblioteka ułatwiająca dodawanie funkcji obsugujących żądania HTTP
 var express = require('express')
 
-// obsługa plików przesyłanych w formularzach
-var multer  = require('multer')
-var upload = multer({ dest: './uploads/' });
-
-var path = require('path');
-var fs = require('fs');
-var async = require('async');
-
 // middleware parsująvy przychodzące zapytania i wydobywający z nich dane
 var bodyParser = require('body-parser')
 
@@ -45,6 +37,14 @@ function fixtures() {
 
   if (!db.has('files').value()) {
     db.set('files', []).value();
+  }
+
+  if (!db.has('playlists').value()) {
+    db.set('playlists', []).value();
+  }
+
+  if (!db.has('campaigns').value()) {
+    db.set('campaigns', []).value();
   }
 
   db
@@ -135,233 +135,18 @@ io.on('connection', function(socket) {
 app.use('/public', express.static('public'));
 app.use('/images', express.static('uploads'));
 
+// inicjalizacja modułów
+require('./modules/clients.js')(app, db, io);
+require('./modules/groups.js')(app, db);
+require('./modules/attachFiles.js')(app, db);
+require('./modules/playlists.js')(app, db);
+require('./modules/library.js')(app, db);
+require('./modules/campaigns')(app, db);
+
 // routing główny, przekierowanie na stronę z klientami
 app.get('/', function (req, res) {
   res.redirect('/clients');
 });
-
-// routing obsługujący wyświetlanie biblioteki multimediów
-app.get('/library', function (req, res) {
-  var files = db
-    .get('files')
-    // dla każdego pliku pobieramy grupy i klientów, do których jest przypisany
-    .each(function (file) {
-      file.clients = db
-        .get('clients')
-        .filter(function (client) {
-          return client.files.indexOf(file.id) !== -1;
-        })
-        .map('name') //chcemy tylko imię klienta
-        .value();
-      
-      file.groups = db
-        .get('groups')
-        .filter(function (group) {
-          return group.files.indexOf(file.id) !== -1;
-        })
-        .map('name') //chcemy tylko nazwę grupy
-        .value();
-    })
-    .value();
-
-  res.render('library', {
-    files: files,
-  })
-})
-
-app.get('/clients', function (req, res) {
-  // pobieramy klientów
-  var clients = db
-    .get('clients')
-    // dla każdego klienta pobieramy nazwy plików, które są do niego przypisane
-    .each(function (client) {
-      client.filenames = db
-        .get('files')
-        .filter(function (file) {
-          return client.files.indexOf(file.id) !== -1;
-        })
-        .map(function (file) {
-          return file.filename;
-        })
-        .value();
-    })
-    .value();
-  
-  // pobieramy grupy, które zostaną wyświetlone na liście przy każdym kliencie, co umożliwi przypisanie klienta do grupy
-  var groups = db
-    .get('groups')
-    .value();
-
-  res.render('clients', {
-    clients: clients,
-    groups: groups
-  })
-})
-
-app.get('/groups', function (req, res) {
-  var groups = db
-    .get('groups')
-    .each(function (group) {
-      // dla każdej grupy pobieramy listę użytkowników, którzy do niej należą
-      group.clients = db
-        .get('clients')
-        .filter({
-          group: group.name,
-        })
-        .map('name') // interesuje nas tylko imię użytkownika
-        .value();
-      
-      group.filenames = db
-        .get('files')
-        .filter(function (file) {
-          return group.files.indexOf(file.id) !== -1;
-        })
-        .map(function (file) {
-          return file.filename;
-        })
-        .value();
-    })
-    .value();
-
-  return res.render('groups', {
-    groups: groups,
-    // clients: clients,
-  })
-})
-
-app.get('/attach-files/:type(clients|groups)/:targetName([A-Za-z0-9-]{3,20})', function (req, res) {
-  var files = db
-    .get('files')
-    // dla każdego pliku sprawdzamy, czy jest przypisany do grupy lub klienta (definiowane przez parametr w zapytaniu)
-    .each(function (file) {
-      file.attached = db
-        .get(req.params.type) // pobieramy kolekcje określoną w parametrze (clients albo groups)
-        .find(function (thing) {
-          return thing.name == req.params.targetName && thing.files.indexOf(file.id) !== -1;
-        })
-        .value() != null;
-    })
-    .value();
-
-  return res.render('attach-files', {
-    files: files,
-    type: req.params.type,
-    typeName: req.params.type === 'clients' ? 'klient' : 'grupa',
-    name: req.params.targetName
-  })
-})
-
-app.post('/add-group', function (req, res) {
-  var groupName = req.body.name;
-
-  var existingGroup = db
-    .get('groups')
-    .find({
-      name: groupName,
-    })
-    .value();
-
-  if (existingGroup) {
-    return res.json({
-      error: {
-        message: 'Grupa o tej nazwie już istnieje.'
-      }
-    });
-  }
-
-  db
-    .get('groups')
-    .push({
-      name: groupName,
-      files: [],
-    })
-    .value();
-
-  return res.json({
-    data: {
-      message: 'Grupa została dodane.',
-    }
-  });
-});
-
-app.post('/change-client-group', function (req, res) {
-  db
-    .get('clients')
-    .find({
-      name: req.body.client,
-    })
-    .assign({
-      group: req.body.group,
-    })
-    .value();
-
-  return res.json({
-    data: {
-      message: 'Groupa została przypisana.'
-    }
-  });
-})
-
-app.post('/attach-images', function (req, res) {
-  var ids = req.body['ids[]'];
-
-  if (!Array.isArray(ids)) {
-    ids = [];
-  }
-
-  db
-    .get(req.body.type)
-    .find({
-      name: req.body.name
-    })
-    .assign({
-      files: ids,
-    })
-    .value();
-
-  res.json({
-    data: {
-      message: 'Pomyślnie zaktualizowano dane o plikach.',
-    }
-  });
-})
-
-app.post('/sync-clients', function (req, res) {
-  // wysłanie polecenia synchronizacji do wszystkich połączonych kilentów
-  io.emit('sync');
-
-  return res.json({
-    data: {
-      message: 'Wysałno prośbę o zsynchronizowanie.'
-    }
-  });
-})
-
-app.post('/upload', upload.any(), function (req, res) {
-  // pliki są zapisywane przez multera bez rozszerzeń, dlatego trzeba zmienić ich nazwę na taką, która zawiera rozszerzenie
-  async.mapSeries(req.files, function (file, done) {
-    var ext = path.extname(file.originalname);
-    var basename = path.basename(file.path);
-
-    fs.rename(file.path, path.join(file.destination, file.filename + ext), function (err) {
-      return done(err, {
-        id: file.filename,
-        filename: file.filename + ext,
-        originalName: file.originalname,
-      });
-    });
-  }, function (err, uploadedFiles) {
-    // zapisywanie informacji o załadowanych plikach do bazy danych
-    uploadedFiles.forEach(function (file) {
-      var filesInDb = db
-      .get('files')
-      .push(file)
-      .value();
-    })
-
-    res.json();
-  })
-})
 
 app.post('/user-images/:user', function (req, res) {
   var user = db
@@ -414,6 +199,7 @@ app.post('/user-images/:user', function (req, res) {
   });
 })
 
+// start serwera
 server.listen(3000, function () {
   console.log('Aplikacja nasłuchuje na porcie 3000!')
 })

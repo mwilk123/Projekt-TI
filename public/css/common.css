@@ -1,4 +1,3 @@
-
 .root-wrapper {
   padding: 10px;
   box-sizing: border-box;
@@ -84,6 +83,40 @@
   box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 
+.playlist-image {
+  width: 128px;
+  height: 128px;
+  background-size: auto 128px;
+  background-position: center;
+  margin-right: 10px;
+  margin-left: 10px;
+  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+}
+
+.playlist-video {
+  margin-right: 10px;
+  margin-left: 10px;
+  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+}
+
 .box .label {
   margin: 10px 0;
+}
+
+.sort-placeholder {
+  border-top: 1px dashed;
+  height: 0px;
+  margin-bottom: 20px;
+}
+
+.reorder-handle {
+  cursor: move;
+}
+
+input[type=range] {
+  width: 400px;
+}
+
+.remove-item {
+  cursor: pointer;
 }
